@@ -123,7 +123,7 @@ importers:
         specifier: 1.0.7
         version: 1.0.7(tailwindcss@3.4.17)
       xlsx:
-        specifier: file:vendor\xlsx-0.20.3.tgz
+        specifier: file:vendor/xlsx-0.20.3.tgz
         version: file:vendor/xlsx-0.20.3.tgz
       zod:
         specifier: 3.25.56

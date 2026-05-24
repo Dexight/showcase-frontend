@@ -6,8 +6,9 @@ WORKDIR /app
 ENV CI=true
 ENV HUSKY=0
 
-# Включаем pnpm через corepack (версия зафиксирована в package.json/lockfile)
-RUN corepack enable
+# Включаем pnpm через corepack — версия берётся из package.json#packageManager.
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 
 # Сначала манифесты — лучшее кеширование слоёв
 COPY package.json pnpm-lock.yaml ./
