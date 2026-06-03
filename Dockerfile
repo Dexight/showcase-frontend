@@ -26,6 +26,11 @@ COPY . .
 ARG VITE_API_URL=""
 ENV VITE_API_URL=${VITE_API_URL}
 
+# prod | dev — в dev включается форма ввода Bearer-токена на /login и
+# глобальный fetch-интерсептор. Подробнее: src/app/dev-fetch.ts.
+ARG VITE_DEPLOYMENT_MODE="prod"
+ENV VITE_DEPLOYMENT_MODE=${VITE_DEPLOYMENT_MODE}
+
 RUN pnpm build
 
 # Финальный stage — лёгкий init-контейнер. Копирует собранную статику
