@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Separator } from "@/shared/ui/separator";
 import { useGetProject } from "@/pages/project-page/api/hooks/use-get-project";
@@ -17,6 +18,7 @@ import { UpdatableProjectUsers } from "./components/updatable-project-users";
 import { Navigate } from "react-router";
 import { useAuth } from "@/shared/hooks/use-auth";
 import { useGetDatabaseUser } from "@/pages/create-project-page/api/hooks/use-get-database-user";
+import { FileUpload } from "@/pages/create-project-page/components/file-upload";
 
 export function AdminProjectEditor() {
   const { id } = useParams();
@@ -30,6 +32,52 @@ export function AdminProjectEditor() {
 	
   const { data: project, isPending, refetch } = useGetProject(id as string);
 
+  type CarouselImage =
+  | { type: "url"; value: string }
+  | { type: "file"; value: File };
+
+  const [images, setImages] = useState<CarouselImage[]>([]);
+
+  useEffect(() => {
+    if (!project?.screenshots) return;
+
+    setImages(
+      project.screenshots.map((url) => ({
+        type: "url",
+        value: url,
+      }))
+    );
+  }, [project]);
+
+  const updateImages = (image: File | null) => {
+    if (!image) return;
+
+    setImages((prev) => [
+      ...prev,
+      {
+        type: "file",
+        value: image,
+      },
+    ]);
+  };
+
+  const handleDeleteImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSetAsMainImage = (index: number) => {
+    setImages((prev) => {
+      if (index === 0) return prev;
+
+      const main = prev[index];
+
+      return [
+        main,
+        ...prev.filter((_, i) => i !== index),
+      ];
+    });
+  };
+
   if (isPending) {
     return <FullPageSpinner />;
   }
@@ -39,8 +87,11 @@ export function AdminProjectEditor() {
   }
 
   const canEdit =
-    currentUser.role === "ADMIN" ||
-    project.users?.some((u) => u.id === currentUser.id);
+    currentUser &&
+    (
+      currentUser.role === "ADMIN" ||
+      project.users?.some((u) => u.id === currentUser.id)
+    );
   
   if (!canEdit) {
     return <Navigate to={`/projects/${project.id}`} replace />;
@@ -55,10 +106,13 @@ export function AdminProjectEditor() {
         <div className="flex lg:w-[75%] flex-col">
           {project.mainScreenshot && project.screenshots && (
             <ProjectCarousel
-              imagesType="url"
-              images={project.screenshots}
-              showControls={project.screenshots.length > 1}
-            />
+              images={images}
+              showControls={images.length > 1}
+              onDeleteImage={handleDeleteImage}
+              onSetMainImage={handleSetAsMainImage}
+            >
+              <FileUpload updateImages={updateImages} />
+            </ProjectCarousel>
           )}
           <UpdatableDescription
             previousValue={project.description ?? ""}

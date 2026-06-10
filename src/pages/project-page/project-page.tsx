@@ -31,9 +31,13 @@ export function ProjectPage() {
   if (!project) {
     return <ErrorFallback refetch={refetch} />;
   }
+
   const canEdit =
-  	currentUser.role === "ADMIN" ||
-  	project.users?.some((u) => u.id === currentUser.id);
+    currentUser &&
+    (
+      currentUser.role === "ADMIN" ||
+      project.users?.some((u) => u.id === currentUser.id)
+    );
   
   const hasLinks = project.repo || project.presentation;
 
@@ -56,8 +60,10 @@ export function ProjectPage() {
         <div className="flex lg:w-[75%] flex-col">
           {project.mainScreenshot && project.screenshots && (
             <ProjectCarousel
-              imagesType="url"
-              images={project.screenshots}
+              images={project.screenshots.map((url) => ({
+                type: "url" as const,
+                value: url,
+              }))}
               showControls={project.screenshots.length > 1}
             />
           )}
