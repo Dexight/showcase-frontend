@@ -54,8 +54,13 @@ export function UpdatableGrade({
     }
     if (!/^(0|[1-9]\d{0,2})$/.test(val)) return;
     const num = Number(val);
-    if (num >= 0 && num <= 100) {
+    if (num >= 0 && num <= 100) {      
       setGrade(val);
+    }
+
+    if (num >= 101 && num <= 110)
+    {
+      setGrade("100");
     }
   };
   return (
@@ -69,7 +74,7 @@ export function UpdatableGrade({
       {edit && (
         <div className="flex flex-col gap-2 w-full">
           <Input
-            placeholder="Введите ссылку на презентацию..."
+            placeholder="Укажите оценку проекта..."
             className="border-none shadow-none px-1"
             value={currentGrade}
             onChange={handleGradeChange}

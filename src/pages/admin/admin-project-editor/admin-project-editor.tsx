@@ -104,16 +104,14 @@ export function AdminProjectEditor() {
       <Separator className="mb-2" />
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex lg:w-[75%] flex-col">
-          {project.mainScreenshot && project.screenshots && (
-            <ProjectCarousel
-              images={images}
-              showControls={images.length > 1}
-              onDeleteImage={handleDeleteImage}
-              onSetMainImage={handleSetAsMainImage}
-            >
-              <FileUpload updateImages={updateImages} />
-            </ProjectCarousel>
-          )}
+          <ProjectCarousel
+            images={images}
+            showControls={images.length > 1}
+            onDeleteImage={handleDeleteImage}
+            onSetMainImage={handleSetAsMainImage}
+          >
+            <FileUpload updateImages={updateImages} />
+          </ProjectCarousel>
           <UpdatableDescription
             previousValue={project.description ?? ""}
             projectId={id as string}
