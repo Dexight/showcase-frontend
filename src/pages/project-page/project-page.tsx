@@ -12,6 +12,9 @@ import { Pencil } from "lucide-react";
 import { useAuth } from "@/shared/hooks/use-auth";
 import { useGetDatabaseUser } from "@/pages/create-project-page/api/hooks/use-get-database-user";
 import { Link as RouterLink } from "react-router";
+import { Trash2 } from "lucide-react";
+import { useNavigate } from "react-router";
+import { useDeleteProject } from "./api/hooks/use-delete-project";
 
 export function ProjectPage() {
   const { id } = useParams();
@@ -21,6 +24,8 @@ export function ProjectPage() {
 	  authUser?.attributes.email as string,
 	  !!authUser && !isAuthLoading
   );
+  const navigate = useNavigate();
+  const deleteProjectMutation = useDeleteProject();
   if (isPending) {
     return (
       <div className="flex items-center justify-center absolute top-0 left-0 h-svh -z-10 w-full bg-background">
@@ -41,21 +46,45 @@ export function ProjectPage() {
   
   const hasLinks = project.repo || project.presentation;
 
+  const handleDeleteProject = async () => {
+    const confirmed = window.confirm(
+      `Удалить проект "${project.title}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteProjectMutation.mutateAsync(project.id.toString());
+
+      navigate("/projects");
+    } catch {
+      alert("Не удалось удалить проект");
+    }
+  };
+
   return (
     <div className="flex flex-col justify-between gap-2 max-w-7xl w-full">
       <div className="flex items-center gap-2 max-w-[100%]">
-  	<h1 className="w-full mb-1">{project.title}</h1>
+  	    <h1 className="w-full mb-1">{project.title}</h1>
 
-  	{canEdit && (
-    		<RouterLink to={`/edit/projects/${project.id}`}>
-      		<Pencil
-        			size={20}
-       			className="cursor-pointer hover:opacity-70"
-      		/>
-    		</RouterLink>
-  	)}
-</div>      
-<Separator className="mb-2" />
+        {canEdit && (
+          <div className="flex items-center gap-2">
+            <RouterLink to={`/edit/projects/${project.id}`}>
+              <Pencil
+                size={20}
+                className="cursor-pointer hover:opacity-70"
+              />
+            </RouterLink>
+
+            <Trash2
+              size={20}
+              className="cursor-pointer text-destructive hover:opacity-70"
+              onClick={handleDeleteProject}
+            />
+          </div>
+        )}
+      </div>      
+      <Separator className="mb-2" />
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex lg:w-[75%] flex-col">
           {project.mainScreenshot && project.screenshots && (
