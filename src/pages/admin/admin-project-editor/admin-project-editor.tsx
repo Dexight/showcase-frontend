@@ -14,10 +14,20 @@ import { UpdatablePresentation } from "./components/updatable-presentation";
 import { UpdatableRepo } from "./components/updatable-repo";
 import { UpdatableGrade } from "./components/updatable-grade";
 import { UpdatableProjectUsers } from "./components/updatable-project-users";
+import { Navigate } from "react-router";
+import { useAuth } from "@/shared/hooks/use-auth";
+import { useGetDatabaseUser } from "@/pages/create-project-page/api/hooks/use-get-database-user";
 
 export function AdminProjectEditor() {
   const { id } = useParams();
 
+  const { authUser, isAuthLoading } = useAuth();
+	
+  const { data: currentUser } = useGetDatabaseUser(
+    authUser?.attributes.email as string,
+    !!authUser && !isAuthLoading
+  );
+	
   const { data: project, isPending, refetch } = useGetProject(id as string);
 
   if (isPending) {
@@ -28,6 +38,14 @@ export function AdminProjectEditor() {
     return <ErrorFallback refetch={refetch} />;
   }
 
+  const canEdit =
+    currentUser.role === "ADMIN" ||
+    project.users?.some((u) => u.id === currentUser.id);
+  
+  if (!canEdit) {
+    return <Navigate to={`/projects/${project.id}`} replace />;
+  }
+	
   const hasLinks = project.repo || project.presentation;
   return (
     <div className="flex flex-col justify-between gap-2 max-w-7xl w-full">

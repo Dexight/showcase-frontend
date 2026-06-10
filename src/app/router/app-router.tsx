@@ -57,6 +57,16 @@ export function AppRouter() {
             </Suspense>
           }
         />
+        <Route element={<ProtectedRoute authOnly />}>
+	   <Route
+	    path="/edit/projects/:id"
+	    element={
+	      <Suspense fallback={<FullPageSpinner />}>
+	        <AdminProjectEditor />
+	      </Suspense>
+	    }
+	  />
+	  </Route>
         <Route path="/projects" element={<ProjectsListPage />} />
         <Route element={<ProtectedRoute authOnly />}>
           <Route path="/account" element={<AccountPage />} />
