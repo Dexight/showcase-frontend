@@ -33,14 +33,16 @@ export function ProjectCarousel(props: ProjectCarouselProps) {
   const { images, children, className, showControls } = props;
 
   const [emblaRef, emblaApi] = useEmblaCarousel();
-  const { selectedIndex, scrollSnaps, onDotButtonClick } =
-    useDotButton(emblaApi);
+  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
   const {
     prevBtnDisabled,
     nextBtnDisabled,
     onPrevButtonClick,
     onNextButtonClick,
   } = usePrevNextButtons(emblaApi);
+  const isEditable =
+    !!props.onDeleteImage &&
+    !!props.onSetMainImage;
 
   return (
     <section className={cn("embla", className)}>
@@ -62,8 +64,9 @@ export function ProjectCarousel(props: ProjectCarouselProps) {
               key={`url-${index}`}
               url={image.value}
               index={index}
-              onDeleteImage={props.onDeleteImage ?? (() => {})}
-              onSetMainImage={props.onSetMainImage ?? (() => {})}
+              isEditable={isEditable}
+              onDeleteImage={props.onDeleteImage}
+              onSetMainImage={props.onSetMainImage}
             />
           )
         )}

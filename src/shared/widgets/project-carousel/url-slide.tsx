@@ -6,13 +6,15 @@ import { Star, Trash } from "lucide-react";
 interface UrlSlideProps {
   url: string;
   index: number;
-  onDeleteImage: (index: number) => void;
-  onSetMainImage: (index: number) => void;
+  isEditable?: boolean;
+  onDeleteImage?: (index: number) => void;
+  onSetMainImage?: (index: number) => void;
 }
 
 export function UrlSlide({
   url,
   index,
+  isEditable = false,
   onDeleteImage,
   onSetMainImage,
 }: UrlSlideProps) {
@@ -44,32 +46,33 @@ export function UrlSlide({
             }
           )}
         />
-
-        <div
-          className={cn(
-            "absolute inset-0 flex justify-center items-center gap-2 z-10 invisible group-hover:visible",
-            {
-              visible: isMobile,
-            }
-          )}
-        >
-          <Button
-            size="icon"
-            variant="secondary"
-            disabled={isMain}
-            onClick={() => onSetMainImage(index)}
+        {isEditable && (
+          <div
+            className={cn(
+              "absolute inset-0 flex justify-center items-center gap-2 z-10 invisible group-hover:visible",
+              {
+                visible: isMobile,
+              }
+            )}
           >
-            <Star />
-          </Button>
+            <Button
+              size="icon"
+              variant="secondary"
+              disabled={isMain}
+              onClick={() => onSetMainImage(index)}
+            >
+              <Star />
+            </Button>
 
-          <Button
-            size="icon"
-            variant="secondary"
-            onClick={() => onDeleteImage(index)}
-          >
-            <Trash />
-          </Button>
-        </div>
+            <Button
+              size="icon"
+              variant="secondary"
+              onClick={() => onDeleteImage(index)}
+            >
+              <Trash />
+            </Button>
+          </div>
+        )}
       </div>
 
       {isMain && (
