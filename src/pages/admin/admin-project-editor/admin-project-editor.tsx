@@ -93,9 +93,9 @@ export function AdminProjectEditor() {
       project.users?.some((u) => u.id === currentUser.id)
     );
   
-  if (!canEdit) {
-    return <Navigate to={`/projects/${project.id}`} replace />;
-  }
+//  if (!canEdit) {
+//    return <Navigate to={`/projects/${project.id}`} replace />;
+//  }
 	
   const hasLinks = project.repo || project.presentation;
   return (
