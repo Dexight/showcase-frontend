@@ -12,6 +12,7 @@ import { AdminLayout } from "@/pages/admin/admin-layout";
 import { AdminTags } from "@/pages/admin/admin-tags";
 import { AdminTracks } from "@/pages/admin/admin-tracks";
 import { AdminDates } from "@/pages/admin/admin-dates";
+import { AdminRoute } from "@/app/router/admin-route";
 import { FullPageSpinner } from "@/shared/ui/full-page-spinner";
 
 const CreateProjectPage = lazy(() =>
@@ -80,36 +81,42 @@ export function AppRouter() {
           />
         </Route>
       </Route>
-      <Route path="/admin" element={<AdminPage />} />
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route path="tags" element={<AdminTags />} />
-        <Route path="tracks" element={<AdminTracks />} />
-        <Route path="dates" element={<AdminDates />} />
-        <Route
-          path="primary-filling"
-          element={
-            <Suspense fallback={<FullPageSpinner />}>
-              <PrimaryFilling />
-            </Suspense>
-          }
-        />
-        <Route
-          path="project-editor"
-          element={
-            <Suspense fallback={<FullPageSpinner />}>
-              <AdminProjectUploader />
-            </Suspense>
-          }
-        />
-        <Route path="projects" element={<ProjectsListPage />} />
-        <Route
-          path="projects/:id"
-          element={
-            <Suspense fallback={<FullPageSpinner />}>
-              <AdminProjectEditor />
-            </Suspense>
-          }
-        />
+      <Route element={<AdminRoute />}>
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="tags" element={<AdminTags />} />
+          <Route path="tracks" element={<AdminTracks />} />
+          <Route path="dates" element={<AdminDates />} />
+
+          <Route
+            path="primary-filling"
+            element={
+              <Suspense fallback={<FullPageSpinner />}>
+                <PrimaryFilling />
+              </Suspense>
+            }
+          />
+
+          <Route
+            path="project-editor"
+            element={
+              <Suspense fallback={<FullPageSpinner />}>
+                <AdminProjectUploader />
+              </Suspense>
+            }
+          />
+
+          <Route path="projects" element={<ProjectsListPage />} />
+
+          <Route
+            path="projects/:id"
+            element={
+              <Suspense fallback={<FullPageSpinner />}>
+                <AdminProjectEditor />
+              </Suspense>
+            }
+          />
+        </Route>
       </Route>
       <Route element={<ProtectedRoute authOnly={false} />}>
         <Route path="/login" element={<LoginRedirectPage />} />
