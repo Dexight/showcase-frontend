@@ -220,9 +220,13 @@ export function AdminProjectUploader() {
       />
       <Separator />
       <ProjectCarousel
-        imagesType="file"
         className="w-full"
-        images={project.screenshots}
+        images={
+          project.screenshots?.map((file) => ({
+            type: "file" as const,
+            value: file,
+          })) ?? []
+        }
         showControls={
           !!project.screenshots &&
           (project.screenshots.length > 1 ||
