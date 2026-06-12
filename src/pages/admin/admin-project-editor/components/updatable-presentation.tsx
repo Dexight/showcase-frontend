@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { Input } from "@/shared/ui/input";
 import { ConfirmButton } from "./confirm-button";
 import { useToast } from "@/shared/hooks/use-toast";
@@ -23,12 +22,9 @@ export function UpdatablePresentation({
 
   const handlePresentationChange = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       await mutateAsync({
         projectId,
         presentation: currentPresentation,
-        login,
-        password,
       });
     } catch (error) {
       toast({

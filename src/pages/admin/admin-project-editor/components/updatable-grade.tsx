@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { Input } from "@/shared/ui/input";
 import { ConfirmButton } from "./confirm-button";
 import { useToast } from "@/shared/hooks/use-toast";
@@ -23,7 +22,6 @@ export function UpdatableGrade({
 
   const handleGradeSubmit = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       const parsedGrade = Number(currentGrade);
       if (isNaN(parsedGrade)) {
         throw new Error("Неверный формат оценки");
@@ -31,8 +29,6 @@ export function UpdatableGrade({
       await mutateAsync({
         projectId,
         grade: currentGrade,
-        login,
-        password,
       });
       setEdit(false);
     } catch (error) {

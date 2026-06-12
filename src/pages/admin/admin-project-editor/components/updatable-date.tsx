@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { ConfirmButton } from "./confirm-button";
 import { useToast } from "@/shared/hooks/use-toast";
 import { useUpdateProjectDate } from "../api/hooks/use-update-project-date";
@@ -28,14 +27,11 @@ export function UpdatableDate({
 
   const handleDateChange = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       const dateId = dates?.find((date) => date.name === currentDate)?.id;
       if (!dateId) throw new Error("Не удалось получить дату");
       await mutateAsync({
         projectId,
         dateId: Number(dateId),
-        login,
-        password,
       });
       setEdit(false);
     } catch (error) {

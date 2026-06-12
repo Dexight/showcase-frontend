@@ -3,7 +3,6 @@ import { useToast } from "@/shared/hooks/use-toast";
 import { Users } from "@/shared/types/schemas";
 import { useAddProjectUser } from "../api/hooks/use-add-project-user";
 import { useDeleteProjectUser } from "../api/hooks/use-delete-project-user";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { useState } from "react";
 import { UsersSelect } from "@/pages/admin/components/users-select";
 import { useGetAllUsers } from "@/pages/admin/api/hooks/use-get-all-users";
@@ -28,14 +27,11 @@ export function UpdatableProjectUsers({
 
   const handleAddUser = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       const userId = users?.find((user) => user.fullName === addedUserName)?.id;
       if (!userId) throw new Error("Не удалось получить участника");
       await mutateAddAsync({
         projectId,
         userId,
-        login,
-        password,
       });
       setAddedUserName("");
       setEdit(false);
@@ -53,12 +49,9 @@ export function UpdatableProjectUsers({
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      const { login, password } = getAdminCredentials();
       await mutateDeleteAsync({
         projectId,
         userId: userId,
-        login,
-        password,
       });
     } catch (error) {
       toast({
