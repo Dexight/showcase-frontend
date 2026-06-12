@@ -40,7 +40,7 @@ export function ProjectPage() {
   const canEdit =
     currentUser &&
     (
-      currentUser.role === "ADMIN" ||
+      currentUser.role.id === 4 ||
       project.users?.some((u) => u.id === currentUser.id)
     );
   
