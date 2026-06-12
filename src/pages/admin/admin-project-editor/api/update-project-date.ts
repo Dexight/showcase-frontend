@@ -12,7 +12,8 @@ export async function updateProjectDate({
       dateId
     )}`,
     {
-      method: "PATCH"
+      method: "PATCH",
+      credentials: "include",
     }
   );
 

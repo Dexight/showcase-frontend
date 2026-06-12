@@ -13,6 +13,7 @@ export async function addProjectUser({
     )}`,
     {
       method: "POST",
+      credentials: "include",
     }
   );
 

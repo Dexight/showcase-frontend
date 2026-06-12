@@ -13,6 +13,7 @@ export async function updateProjectGrade({
     )}`,
     {
       method: "PATCH",
+      credentials: "include",
     }
   );
 

@@ -14,6 +14,7 @@ export async function updateProjectTitle({
     )}`,
     {
       method: "PATCH",
+      credentials: "include",
     }
   );
 

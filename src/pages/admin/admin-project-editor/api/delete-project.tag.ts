@@ -13,6 +13,7 @@ export async function deleteProjectTag({
     )}`,
     {
       method: "DELETE",
+      credentials: "include",
     }
   );
 

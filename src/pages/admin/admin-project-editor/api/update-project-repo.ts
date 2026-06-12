@@ -13,6 +13,7 @@ export async function updateProjectRepo({
     )}`,
     {
       method: "PATCH",
+      credentials: "include",
     }
   );
 

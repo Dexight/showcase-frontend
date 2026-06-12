@@ -13,6 +13,7 @@ export async function deleteProjectUser({
     )}`,
     {
       method: "DELETE",
+      credentials: "include",
     }
   );
 

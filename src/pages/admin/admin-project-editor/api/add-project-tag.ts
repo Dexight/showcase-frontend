@@ -13,6 +13,7 @@ export async function addProjectTag({
     )}`,
     {
       method: "POST",
+      credentials: "include",
     }
   );
 

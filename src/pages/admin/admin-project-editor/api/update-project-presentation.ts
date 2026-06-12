@@ -13,6 +13,7 @@ export async function updateProjectPresentation({
     )}`,
     {
       method: "PATCH",
+      credentials: "include",
     }
   );
 
