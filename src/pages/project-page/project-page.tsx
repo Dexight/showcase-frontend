@@ -66,8 +66,6 @@ export function ProjectPage() {
     <div className="flex flex-col justify-between gap-2 max-w-7xl w-full">
       <div className="flex items-center gap-2 max-w-[100%]">
   	    <h1 className="w-full mb-1">{project.title}</h1>
-
-        {canEdit && (
           <div className="flex items-center gap-2">
             <RouterLink to={`/edit/projects/${project.id}`}>
               <Pencil
@@ -82,7 +80,6 @@ export function ProjectPage() {
               onClick={handleDeleteProject}
             />
           </div>
-        )}
       </div>      
       <Separator className="mb-2" />
       <div className="flex flex-col lg:flex-row gap-4">
