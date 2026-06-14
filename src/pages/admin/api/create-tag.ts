@@ -1,14 +1,12 @@
 import { API_URL } from "@/shared/api/constants";
 
 export async function createTag(req: {
-  login: string;
-  password: string;
   name: string;
 }) {
   const res = await fetch(`${API_URL}/admin/tags`, {
     method: "POST",
+    credentials: "include",
     headers: {
-      Authorization: "Basic " + btoa(`${req.login}:${req.password}`),
       "Content-Type": "application/json",
     },
     body:  JSON.stringify({ name: req.name }),

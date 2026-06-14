@@ -64,8 +64,6 @@ export const createProjectSchema = z.object({
 
 export const createAdminProjectSchema = createProjectSchema.extend({
   grade: z.number(),
-  login: z.string(),
-  password: z.string(),
 });
 
 export const projectsSchema = z.array(projectSchema);
