@@ -27,9 +27,7 @@ export async function uploadPrimaryFilling(
   const res = await fetch(`${API_URL}/admin/primary_filling`, {
     method: "POST",
     body: createFormData(dateId, trackId, files),
-    headers: {
-      Authorization: "Basic " + btoa(`admin:admin`),
-    },
+    credentials: "include",
   });
   if (!res.ok) throw new Error("Что-то пошло не так");
 }
