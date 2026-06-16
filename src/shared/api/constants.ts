@@ -1,3 +1,8 @@
-export const API_URL = import.meta.env.DEV
-  ? "http://localhost:8080"
-  : "https://showcase-2-0.onrender.com";
+const fromEnv = import.meta.env.VITE_API_URL as string | undefined;
+
+export const API_URL =
+  fromEnv !== undefined
+    ? fromEnv
+    : import.meta.env.DEV
+      ? "http://localhost:8080"
+      : "";
