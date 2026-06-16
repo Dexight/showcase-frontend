@@ -5,7 +5,6 @@ import { FullPageSpinner } from "@/shared/ui/full-page-spinner";
 import { Input } from "@/shared/ui/input";
 import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import { useState } from "react";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 
 interface AdminEntityPanelProps<T> {
   entities: (T & { name: string }[]) | undefined;
@@ -14,7 +13,7 @@ interface AdminEntityPanelProps<T> {
   mutateAsync: UseMutateAsyncFunction<
     unknown,
     Error,
-    { login: string; password: string; name: string }
+    { name: string }
   >;
 }
 
@@ -34,8 +33,7 @@ export function AdminEntityPanel<T>({
   }
   const handleMutate = async () => {
     try {
-      const { login, password } = getAdminCredentials();
-      await mutateAsync({ login, password, name });
+      await mutateAsync({ name });
       toast({
         title: "Данные успешно загружены",
         variant: "default",

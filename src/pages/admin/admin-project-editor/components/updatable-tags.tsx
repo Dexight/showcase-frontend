@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { useToast } from "@/shared/hooks/use-toast";
 import { useAddProjectTag } from "../api/hooks/use-add-project-tag";
 import { useDeleteProjectTag } from "../api/hooks/use-delete-project-tag";
@@ -30,14 +29,11 @@ export function UpdatableTags({ projectId, projectTags }: UpdatableTitleProps) {
 
   const handleAddTag = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       const tagId = tags?.find((_tag) => _tag.name === tag)?.id;
       if (!tagId) throw new Error("Не удалось получить трек");
       await mutateAddAsync({
         projectId,
         tagId: tagId,
-        login,
-        password,
       });
       setTag(null);
       setEdit(false);
@@ -55,14 +51,11 @@ export function UpdatableTags({ projectId, projectTags }: UpdatableTitleProps) {
 
   const handleDeleteTag = async (tag: string) => {
     try {
-      const { login, password } = getAdminCredentials();
       const tagId = tags?.find((_tag) => _tag.name === tag)?.id;
       if (!tagId) throw new Error("Не удалось получить трек");
       await mutateDeleteAsync({
         projectId,
         tagId: tagId,
-        login,
-        password,
       });
     } catch (error) {
       toast({

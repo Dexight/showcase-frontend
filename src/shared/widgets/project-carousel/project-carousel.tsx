@@ -7,38 +7,42 @@ import { useDotButton, usePrevNextButtons } from "./hooks";
 import { UrlSlide } from "./url-slide";
 import { FileSlide } from "./file-slide";
 
+type CarouselImage =
+  | {
+      type: "url";
+      value: string;
+    }
+  | {
+      type: "file";
+      value: File;
+    };
+
 type BaseProps = {
   className?: string;
   children?: React.ReactNode;
   showControls: boolean;
 };
 
-type FileCarouselProps = BaseProps & {
-  images: File[] | null;
-  imagesType: "file";
-  onDeleteImage: (index: number) => void;
-  onSetMainImage: (index: number) => void;
+type ProjectCarouselProps = BaseProps & {
+  images: CarouselImage[];
+  onDeleteImage?: (index: number) => void;
+  onSetMainImage?: (index: number) => void;
 };
-
-type UrlCarouselProps = BaseProps & {
-  images: string[] | null;
-  imagesType: "url";
-};
-
-type ProjectCarouselProps = FileCarouselProps | UrlCarouselProps;
 
 export function ProjectCarousel(props: ProjectCarouselProps) {
-  const { images, imagesType, children, className, showControls } = props;
+  const { images, children, className, showControls } = props;
 
   const [emblaRef, emblaApi] = useEmblaCarousel();
-  const { selectedIndex, scrollSnaps, onDotButtonClick } =
-    useDotButton(emblaApi);
+  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
   const {
     prevBtnDisabled,
     nextBtnDisabled,
     onPrevButtonClick,
     onNextButtonClick,
   } = usePrevNextButtons(emblaApi);
+  const isEditable =
+    !!props.onDeleteImage &&
+    !!props.onSetMainImage;
 
   return (
     <section className={cn("embla", className)}>
@@ -46,21 +50,26 @@ export function ProjectCarousel(props: ProjectCarouselProps) {
         <div className="embla__container">
           {children}
 
-          {imagesType === "file" &&
-            images?.map((file, index) => (
-              <FileSlide
-                key={`${file.name}-${index}`}
-                file={file}
-                index={index}
-                onDeleteImage={props.onDeleteImage}
-                onSetMainImage={props.onSetMainImage}
-              />
-            ))}
-
-          {imagesType === "url" &&
-            images?.map((url, index) => (
-              <UrlSlide key={`${url}-${index}`} url={url} index={index} />
-            ))}
+          {images?.map((image, index) =>
+          image.type === "file" ? (
+            <FileSlide
+              key={`file-${index}`}
+              file={image.value}
+              index={index}
+              onDeleteImage={props.onDeleteImage ?? (() => {})}
+              onSetMainImage={props.onSetMainImage ?? (() => {})}
+            />
+          ) : (
+            <UrlSlide
+              key={`url-${index}`}
+              url={image.value}
+              index={index}
+              isEditable={isEditable}
+              onDeleteImage={props.onDeleteImage}
+              onSetMainImage={props.onSetMainImage}
+            />
+          )
+        )}
         </div>
       </div>
 

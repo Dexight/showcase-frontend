@@ -2,7 +2,6 @@ import { useState } from "react";
 import { RichEditor } from "@/shared/ui/editors/rich-editor";
 import { StaticRichEditor } from "@/shared/ui/editors/static-rich-editor";
 import { useUpdateProjectDescription } from "../api/hooks/use-update-project-description";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { ConfirmButton } from "./confirm-button";
 import { Button } from "@/shared/ui/button";
 import { useToast } from "@/shared/hooks/use-toast";
@@ -27,12 +26,9 @@ export function UpdatableDescription({
 
   const handleDescriptionChange = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       await mutateAsync({
         projectId,
-        description: currentDescription,
-        login,
-        password,
+        description: currentDescription
       });
       setShowEditor(false);
     } catch (error) {

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { Input } from "@/shared/ui/input";
 import { ConfirmButton } from "./confirm-button";
 import { useToast } from "@/shared/hooks/use-toast";
@@ -22,12 +21,9 @@ export function UpdatableRepo({
 
   const handleRepoChange = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       await mutateAsync({
         projectId,
         repo: currentRepo,
-        login,
-        password,
       });
     } catch (error) {
       toast({

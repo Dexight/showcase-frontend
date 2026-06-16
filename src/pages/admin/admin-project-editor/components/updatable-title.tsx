@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useUpdateProjectTitle } from "../api/hooks/use-update-project-title";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { Input } from "@/shared/ui/input";
 import { ConfirmButton } from "./confirm-button";
 import { useToast } from "@/shared/hooks/use-toast";
@@ -22,12 +21,9 @@ export function UpdatableTitle({
 
   const handleTitleChange = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       await mutateAsync({
         projectId,
         title: currentTitle,
-        login,
-        password,
       });
     } catch (error) {
       toast({

@@ -90,27 +90,21 @@ export function AdminProjectUploader() {
         throw new Error("Не все необходимые поля корректно заполнены");
       }
 
-      const login = window.prompt("Введите логин");
-      const password = window.prompt("Введите пароль");
-      if (login && password) {
-        const mappedProject: CreateAdminProject = {
-          ...project,
-          mainScreenshot: project.screenshots ? project.screenshots[0] : null,
-          trackId,
-          tagsId,
-          dateId,
-          usersId,
-          grade: parseInt(project.grade),
-          login,
-          password,
-        };
+      const mappedProject: CreateAdminProject = {
+        ...project,
+        mainScreenshot: project.screenshots ? project.screenshots[0] : null,
+        trackId,
+        tagsId,
+        dateId,
+        usersId,
+        grade: parseInt(project.grade),
+      };
 
-        await mutateAsync(mappedProject);
-        setProject(initialCreateProjectState);
-        toast({
-          title: "Проект успешно загружен!",
-        });
-      }
+      await mutateAsync(mappedProject);
+      setProject(initialCreateProjectState);
+      toast({
+        title: "Проект успешно загружен!",
+      });
     } catch (error) {
       toast({
         title: "Ошибка при загрузке проекта",
@@ -220,9 +214,13 @@ export function AdminProjectUploader() {
       />
       <Separator />
       <ProjectCarousel
-        imagesType="file"
         className="w-full"
-        images={project.screenshots}
+        images={
+          project.screenshots?.map((file) => ({
+            type: "file" as const,
+            value: file,
+          })) ?? []
+        }
         showControls={
           !!project.screenshots &&
           (project.screenshots.length > 1 ||

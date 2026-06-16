@@ -8,10 +8,24 @@ import { MemberList } from "./components/member-list";
 import { StaticRichEditor } from "@/shared/ui/editors/static-rich-editor";
 import { ErrorFallback } from "@/shared/ui/error-fallback";
 import { ProjectCarousel } from "@/shared/widgets/project-carousel";
+import { Pencil } from "lucide-react";
+import { useAuth } from "@/shared/hooks/use-auth";
+import { useGetDatabaseUser } from "@/pages/create-project-page/api/hooks/use-get-database-user";
+import { Link as RouterLink } from "react-router";
+import { Trash2 } from "lucide-react";
+import { useNavigate } from "react-router";
+import { useDeleteProject } from "./api/hooks/use-delete-project";
 
 export function ProjectPage() {
   const { id } = useParams();
   const { data: project, isPending, refetch } = useGetProject(id as string);
+  const { authUser, isAuthLoading } = useAuth();
+  const { data: currentUser } = useGetDatabaseUser(
+	  authUser?.attributes.email as string,
+	  !!authUser && !isAuthLoading
+  );
+  const navigate = useNavigate();
+  const deleteProjectMutation = useDeleteProject();
   if (isPending) {
     return (
       <div className="flex items-center justify-center absolute top-0 left-0 h-svh -z-10 w-full bg-background">
@@ -23,20 +37,62 @@ export function ProjectPage() {
     return <ErrorFallback refetch={refetch} />;
   }
 
+  const canEdit =
+    currentUser &&
+    (
+      currentUser.role.id === 4 ||
+      project.users?.some((u) => u.id === currentUser.id)
+    );
+  
   const hasLinks = project.repo || project.presentation;
+
+  const handleDeleteProject = async () => {
+    const confirmed = window.confirm(
+      `Удалить проект "${project.title}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteProjectMutation.mutateAsync(project.id.toString());
+
+      navigate("/projects");
+    } catch {
+      alert("Не удалось удалить проект");
+    }
+  };
 
   return (
     <div className="flex flex-col justify-between gap-2 max-w-7xl w-full">
-      <div className="flex flex-col max-w-[75%]">
-        <h1 className="w-full mb-1">{project.title}</h1>
-      </div>
+      <div className="flex items-center gap-2 max-w-[100%]">
+  	    <h1 className="w-full mb-1">{project.title}</h1>
+
+        {canEdit && (
+          <div className="flex items-center gap-2">
+            <RouterLink to={`/edit/projects/${project.id}`}>
+              <Pencil
+                size={20}
+                className="cursor-pointer hover:opacity-70"
+              />
+            </RouterLink>
+
+            <Trash2
+              size={20}
+              className="cursor-pointer text-destructive hover:opacity-70"
+              onClick={handleDeleteProject}
+            />
+          </div>
+        )}
+      </div>      
       <Separator className="mb-2" />
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex lg:w-[75%] flex-col">
           {project.mainScreenshot && project.screenshots && (
             <ProjectCarousel
-              imagesType="url"
-              images={project.screenshots}
+              images={project.screenshots.map((url) => ({
+                type: "url" as const,
+                value: url,
+              }))}
               showControls={project.screenshots.length > 1}
             />
           )}

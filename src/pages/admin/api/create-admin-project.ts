@@ -4,9 +4,7 @@ import {
   createAdminProjectSchema,
 } from "@/shared/types/schemas";
 
-function createFormData(
-  project: CreateAdminProject & { login: string; password: string }
-) {
+function createFormData(project: CreateAdminProject) {
   const validatedProject = createAdminProjectSchema.safeParse(project);
 
   if (validatedProject.error) {
@@ -35,15 +33,11 @@ function createFormData(
   return formData;
 }
 
-export async function createAdminProject(
-  project: CreateAdminProject & { login: string; password: string }
-) {
+export async function createAdminProject(project: CreateAdminProject) {
   const res = await fetch(`${API_URL}/admin/projects`, {
     method: "POST",
     body: createFormData(project),
-    headers: {
-      Authorization: "Basic " + btoa(`${project.login}:${project.password}`),
-    },
+    credentials: "include",
   });
   if (!res.ok) {
     throw new Error("Что-то пошло не так");

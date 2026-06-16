@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { ConfirmButton } from "./confirm-button";
 import { useToast } from "@/shared/hooks/use-toast";
 import { Button } from "@/shared/ui/button";
@@ -28,7 +27,6 @@ export function UpdatableTrack({
 
   const handleTrackChange = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       const trackId = tracks?.find((track) => track.name === currentTrack)?.id;
       if (!trackId) {
         throw new Error("Не удалось получить трек");
@@ -36,8 +34,6 @@ export function UpdatableTrack({
       await mutateAsync({
         projectId,
         trackId: Number(trackId),
-        login,
-        password,
       });
       setEdit(false);
     } catch (error) {

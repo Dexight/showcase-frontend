@@ -1,24 +1,19 @@
 import { API_URL } from "@/shared/api/constants";
-import { Credentials } from "@/shared/types/schemas";
 
 export async function updateProjectDate({
   projectId,
-  dateId,
-  login,
-  password,
+  dateId
 }: {
   projectId: string;
   dateId: number;
-} & Credentials) {
+}) {
   const res = await fetch(
     `${API_URL}/admin/projects/${projectId}/date?dateId=${encodeURIComponent(
       dateId
     )}`,
     {
       method: "PATCH",
-      headers: {
-        Authorization: "Basic " + btoa(`${login}:${password}`),
-      },
+      credentials: "include",
     }
   );
 

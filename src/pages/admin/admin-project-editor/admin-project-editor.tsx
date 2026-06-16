@@ -3,7 +3,6 @@ import { Separator } from "@/shared/ui/separator";
 import { useGetProject } from "@/pages/project-page/api/hooks/use-get-project";
 import { Link } from "lucide-react";
 import { ErrorFallback } from "@/shared/ui/error-fallback";
-import { ProjectCarousel } from "@/shared/widgets/project-carousel";
 import { FullPageSpinner } from "@/shared/ui/full-page-spinner";
 import { UpdatableTitle } from "./components/updatable-title";
 import { UpdatableDescription } from "./components/updatable-description";
@@ -14,10 +13,21 @@ import { UpdatablePresentation } from "./components/updatable-presentation";
 import { UpdatableRepo } from "./components/updatable-repo";
 import { UpdatableGrade } from "./components/updatable-grade";
 import { UpdatableProjectUsers } from "./components/updatable-project-users";
+import { Navigate } from "react-router";
+import { useAuth } from "@/shared/hooks/use-auth";
+import { useGetDatabaseUser } from "@/pages/create-project-page/api/hooks/use-get-database-user";
+import { UpdatableScreenshots } from "./components/updatable-screenshots";
 
 export function AdminProjectEditor() {
   const { id } = useParams();
 
+  const { authUser, isAuthLoading } = useAuth();
+	
+  const { data: currentUser } = useGetDatabaseUser(
+    authUser?.attributes.email as string,
+    !!authUser && !isAuthLoading
+  );
+	
   const { data: project, isPending, refetch } = useGetProject(id as string);
 
   if (isPending) {
@@ -28,6 +38,17 @@ export function AdminProjectEditor() {
     return <ErrorFallback refetch={refetch} />;
   }
 
+  const canEdit =
+    currentUser &&
+    (
+      currentUser.role.id === 4 ||
+      project.users?.some((u) => u.id === currentUser.id)
+    );
+  
+  if (!canEdit) {
+    return <Navigate to={`/projects/${project.id}`} replace />;
+  }
+	
   const hasLinks = project.repo || project.presentation;
   return (
     <div className="flex flex-col justify-between gap-2 max-w-7xl w-full">
@@ -35,13 +56,10 @@ export function AdminProjectEditor() {
       <Separator className="mb-2" />
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex lg:w-[75%] flex-col">
-          {project.mainScreenshot && project.screenshots && (
-            <ProjectCarousel
-              imagesType="url"
-              images={project.screenshots}
-              showControls={project.screenshots.length > 1}
-            />
-          )}
+          <UpdatableScreenshots
+            projectId={id as string}
+            screenshots={project.screenshots ?? []}
+          />
           <UpdatableDescription
             previousValue={project.description ?? ""}
             projectId={id as string}

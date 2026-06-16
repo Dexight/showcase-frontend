@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getAdminCredentials } from "@/pages/admin/utils/get-admin-credentials";
 import { Input } from "@/shared/ui/input";
 import { ConfirmButton } from "./confirm-button";
 import { useToast } from "@/shared/hooks/use-toast";
@@ -23,7 +22,6 @@ export function UpdatableGrade({
 
   const handleGradeSubmit = async () => {
     try {
-      const { login, password } = getAdminCredentials();
       const parsedGrade = Number(currentGrade);
       if (isNaN(parsedGrade)) {
         throw new Error("Неверный формат оценки");
@@ -31,8 +29,6 @@ export function UpdatableGrade({
       await mutateAsync({
         projectId,
         grade: currentGrade,
-        login,
-        password,
       });
       setEdit(false);
     } catch (error) {
@@ -54,8 +50,13 @@ export function UpdatableGrade({
     }
     if (!/^(0|[1-9]\d{0,2})$/.test(val)) return;
     const num = Number(val);
-    if (num >= 0 && num <= 100) {
+    if (num >= 0 && num <= 100) {      
       setGrade(val);
+    }
+
+    if (num >= 101 && num <= 110)
+    {
+      setGrade("100");
     }
   };
   return (
@@ -69,7 +70,7 @@ export function UpdatableGrade({
       {edit && (
         <div className="flex flex-col gap-2 w-full">
           <Input
-            placeholder="Введите ссылку на презентацию..."
+            placeholder="Укажите оценку проекта..."
             className="border-none shadow-none px-1"
             value={currentGrade}
             onChange={handleGradeChange}

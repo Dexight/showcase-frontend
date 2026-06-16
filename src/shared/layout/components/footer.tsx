@@ -2,10 +2,18 @@ import { Button } from "@/shared/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { Link, useLocation } from "react-router";
 import { Separator } from "@/shared/ui/separator";
+import { useAuth } from "@/shared/hooks/use-auth";
+import { useGetDatabaseUser } from "@/pages/create-project-page/api/hooks/use-get-database-user";
 
 /* eslint-disable no-irregular-whitespace */
 export function Footer() {
   const location = useLocation();
+  const { authUser, isAuthLoading } = useAuth();
+  const { data: currentUser } = useGetDatabaseUser(
+    authUser?.attributes.email as string,
+    !!authUser && !isAuthLoading
+  );
+  const isAdmin = currentUser?.role.id === 4;
   return (
     <>
       <Separator />
@@ -46,18 +54,20 @@ export function Footer() {
             </div>
           </div>
           <div className="flex md:flex-col gap-4 justify-between items-center pb-2">
-            <Button variant="outline" asChild>
-              <Link
-                to={location.pathname.includes("/admin") ? "/" : "/admin"}
-                className="max-w-44 xs:max-w-none overflow-hidden"
-              >
-                <span className="truncate block">
-                  {location.pathname.includes("/admin")
-                    ? "Перейти в основное приложение"
-                    : "Войти как администратор"}
-                </span>
-              </Link>
-            </Button>
+            {isAdmin && (
+              <Button variant="outline" asChild>
+                <Link
+                  to={location.pathname.includes("/admin") ? "/" : "/admin"}
+                  className="max-w-44 xs:max-w-none overflow-hidden"
+                >
+                  <span className="truncate block">
+                    {location.pathname.includes("/admin")
+                      ? "Перейти в основное приложение"
+                      : "Войти как администратор"}
+                  </span>
+                </Link>
+              </Button>
+            )}
             <ThemeToggle />
           </div>
         </div>
