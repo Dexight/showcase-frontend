@@ -2,8 +2,16 @@ import { Footer } from "@/shared/layout/components/footer";
 import { Tag, University, Calendar, Edit, File, List, Shield} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Link } from "react-router";
+import { useAuth } from "@/shared/hooks/use-auth";
+import { useGetDatabaseUser } from "@/pages/create-project-page/api/hooks/use-get-database-user";
 
 export function AdminPage() {
+    const { authUser, isAuthLoading } = useAuth();
+    const { data: currentUser } = useGetDatabaseUser(
+      authUser?.attributes.email as string,
+      !!authUser && !isAuthLoading
+    );
+
   return (
     <>
       <div className="min-h-svh py-6 px-5 space-y-6 max-w-7xl mx-auto">
@@ -116,25 +124,27 @@ export function AdminPage() {
               </CardContent>
             </Link>
           </Card>
-          <Card className="cursor-pointer transition-all hover:shadow-md hover:scale-105 active:scale-95">
-            <Link to="admins">
-              <CardHeader className="text-center pb-2">
-                <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900">
-                  <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
+          {currentUser?.role.id === 4 && (
+            <Card className="cursor-pointer transition-all hover:shadow-md hover:scale-105 active:scale-95">
+              <Link to="admins">
+                <CardHeader className="text-center pb-2">
+                  <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900">
+                    <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  </div>
 
-                <CardTitle className="text-lg">
-                  Назначить администратора
-                </CardTitle>
-              </CardHeader>
+                  <CardTitle className="text-lg">
+                    Назначить администратора
+                  </CardTitle>
+                </CardHeader>
 
-              <CardContent className="text-center">
-                <p className="text-sm text-muted-foreground">
-                  Управление правами администраторов
-                </p>
-              </CardContent>
-            </Link>
-          </Card>
+                <CardContent className="text-center">
+                  <p className="text-sm text-muted-foreground">
+                    Управление правами администраторов
+                  </p>
+                </CardContent>
+              </Link>
+            </Card>
+          )}
         </div>
       </div>
       <Footer />

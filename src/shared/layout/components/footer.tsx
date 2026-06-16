@@ -13,7 +13,7 @@ export function Footer() {
     authUser?.attributes.email as string,
     !!authUser && !isAuthLoading
   );
-  const isAdmin = currentUser?.role.id === 4;
+  const isAdmin = currentUser?.role.id === 4 || currentUser?.role.id === 2;
   return (
     <>
       <Separator />

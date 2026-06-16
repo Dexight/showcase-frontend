@@ -14,6 +14,7 @@ import { AdminTracks } from "@/pages/admin/admin-tracks";
 import { AdminDates } from "@/pages/admin/admin-dates";
 import { AdminAdmins } from "@/pages/admin/admin-admins"; 
 import { AdminRoute } from "@/app/router/admin-route";
+import { SuperAdminRoute } from "@/app/router/super-admin-route";
 import { FullPageSpinner } from "@/shared/ui/full-page-spinner";
 
 const CreateProjectPage = lazy(() =>
@@ -88,7 +89,9 @@ export function AppRouter() {
           <Route path="tags" element={<AdminTags />} />
           <Route path="tracks" element={<AdminTracks />} />
           <Route path="dates" element={<AdminDates />} />
-          <Route path="admins" element={<AdminAdmins />} />
+          <Route element={<SuperAdminRoute />}>
+            <Route path="admins" element={<AdminAdmins />} />
+          </Route>
 
           <Route
             path="primary-filling"
