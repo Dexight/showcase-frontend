@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Check, Trash2 } from "lucide-react";
-
 import { UsersSelect } from "./components/users-select";
 import { useGetAllUsers } from "./api/hooks/use-get-all-users";
-
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { addAdmin } from "./api/add-admin";
+import { deleteAdmin } from "./api/delete-admin";
 
 interface AdminUser {
   id: number;
@@ -18,35 +18,39 @@ export function AdminAdmins() {
   const [selectedUser, setSelectedUser] = useState("");
   const [admins, setAdmins] = useState<AdminUser[]>([]);
 
-  const handleAddAdmin = () => {
-    const user = users?.find(
-      (user) => user.fullName === selectedUser
-    );
+  const handleAddAdmin = async () => {
+  const user = users?.find(
+    (user) => user.fullName === selectedUser
+  );
 
-    if (!user) return;
+  if (!user) return;
 
-    const alreadyExists = admins.some(
-      (admin) => admin.id === user.id
-    );
+  const alreadyExists = admins.some(
+    (admin) => admin.id === user.id
+  );
 
-    if (alreadyExists) return;
+  if (alreadyExists) return;
 
-    setAdmins((prev) => [
-      ...prev,
-      {
-        id: user.id,
-        fullName: user.fullName,
-      },
-    ]);
+  await addAdmin(user.id);
 
-    setSelectedUser("");
-  };
+  setAdmins((prev) => [
+    ...prev,
+    {
+      id: user.id,
+      fullName: user.fullName,
+    },
+  ]);
 
-  const handleDeleteAdmin = (id: number) => {
-    setAdmins((prev) =>
-      prev.filter((admin) => admin.id !== id)
-    );
-  };
+  setSelectedUser("");
+};
+
+const handleDeleteAdmin = async (id: number) => {
+  await deleteAdmin(id);
+
+  setAdmins((prev) =>
+    prev.filter((admin) => admin.id !== id)
+  );
+};
 
   return (
     <Card className="w-full max-w-3xl">
