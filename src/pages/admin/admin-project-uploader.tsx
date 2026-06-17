@@ -22,7 +22,7 @@ type CreateAdminProjectState = {
   screenshots: File[] | null;
   track: string;
   date: string;
-  tags: string[];
+  tags: number[];
   users: number[];
   presentation: string;
   description: string;
@@ -68,9 +68,7 @@ export function AdminProjectUploader() {
         dates.find((date) => date.name === project.date)?.id ??
         dates.at(-1)?.id;
 
-      const tagsId = tags
-        ?.filter((tag) => project.tags.includes(tag.name))
-        .map((tag) => tag.id);
+      const tagsId = project.tags;
 
       const usersId = project.users;
 
@@ -119,19 +117,19 @@ export function AdminProjectUploader() {
     }));
   };
 
-  const updateTags = (tag: string) => {
+  const updateTags = (tagId: number) => {
     setProject((prev) => {
-      if (prev.tags.includes(tag)) {
+      if (prev.tags.includes(tagId)) {
         return {
           ...prev,
-          tags: prev.tags.filter((t) => t !== tag),
-        };
-      } else {
-        return {
-          ...prev,
-          tags: [...prev.tags, tag],
+          tags: prev.tags.filter((id) => id !== tagId),
         };
       }
+
+      return {
+        ...prev,
+        tags: [...prev.tags, tagId],
+      };
     });
   };
 

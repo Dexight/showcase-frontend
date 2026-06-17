@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useToast } from "@/shared/hooks/use-toast";
 import { useAddProjectTag } from "../api/hooks/use-add-project-tag";
 import { useDeleteProjectTag } from "../api/hooks/use-delete-project-tag";
-import { useGetAllTags } from "@/shared/api/hooks/use-get-all-tags";
 import { Badge } from "@/shared/ui/badge";
 import { Tags } from "@/shared/types/schemas";
 import { Spinner } from "@/shared/ui/spinner";
@@ -23,19 +22,19 @@ export function UpdatableTags({ projectId, projectTags }: UpdatableTitleProps) {
   const { mutateAsync: mutateDeleteAsync, isPending: isDeletePending } =
     useDeleteProjectTag();
 
-  const { data: tags } = useGetAllTags();
   const [edit, setEdit] = useState(false);
-  const [tag, setTag] = useState<string | null>(null);
+  const [tagIds, setTag] = useState<number[]>([]);
 
   const handleAddTag = async () => {
     try {
-      const tagId = tags?.find((_tag) => _tag.name === tag)?.id;
-      if (!tagId) throw new Error("Не удалось получить трек");
+      if (tagIds.length === 0) {
+        throw new Error("Не удалось получить тег");
+      }
       await mutateAddAsync({
         projectId,
-        tagId: tagId,
+        tagId: tagIds[0],
       });
-      setTag(null);
+      setTag([]);
       setEdit(false);
     } catch (error) {
       toast({
@@ -49,13 +48,11 @@ export function UpdatableTags({ projectId, projectTags }: UpdatableTitleProps) {
     }
   };
 
-  const handleDeleteTag = async (tag: string) => {
+  const handleDeleteTag = async (tagId: number) => {
     try {
-      const tagId = tags?.find((_tag) => _tag.name === tag)?.id;
-      if (!tagId) throw new Error("Не удалось получить трек");
       await mutateDeleteAsync({
         projectId,
-        tagId: tagId,
+        tagId,
       });
     } catch (error) {
       toast({
@@ -74,7 +71,7 @@ export function UpdatableTags({ projectId, projectTags }: UpdatableTitleProps) {
       {projectTags &&
         projectTags?.map((tag) => (
           <Badge
-            onClick={() => handleDeleteTag(tag.name)}
+            onClick={() => handleDeleteTag(tag.id)}
             variant="secondary"
             key={tag.id}
             className="cursor-pointer"
@@ -98,15 +95,15 @@ export function UpdatableTags({ projectId, projectTags }: UpdatableTitleProps) {
       {edit && (
         <div className="w-full">
           <TagsSelect
-            value={tag ? [tag] : []}
-            onValueChange={setTag}
+            value={tagIds}
+            onValueChange={(id) => setTag([id])}
             triggerClassName="mb-1 w-full"
           />
           <div className="flex gap-2 items-center w-full">
             <ConfirmButton
               isLoading={isAddPending}
               onConfirm={handleAddTag}
-              disabled={!tag}
+              disabled={tagIds.length === 0}
             />
             <Button onClick={() => setEdit(false)} variant="outline">
               Отменить

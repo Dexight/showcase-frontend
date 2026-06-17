@@ -6,7 +6,7 @@ import { mapProjects } from "@/shared/utils/map-projects";
 export async function getFilteredProjects({ tags, track, date }: Filters) {
   const params = new URLSearchParams();
 
-  tags?.forEach((tag) => params.append("tags", tag));
+  tags.forEach((tag) => params.append("tags", String(tag)));
   if (track) params.append("track", track);
   if (date) params.append("date", date);
 

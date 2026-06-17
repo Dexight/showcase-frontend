@@ -2,8 +2,8 @@ import { useGetAllTags } from "@/shared/api/hooks/use-get-all-tags";
 import { MultipleSearchCommand } from "./multiple-search-command";
 
 interface TagsSelectProps {
-  value: string[];
-  onValueChange: (value: string) => void;
+  value: number[];
+  onValueChange: (value: number) => void;
   triggerClassName?: string;
 }
 
