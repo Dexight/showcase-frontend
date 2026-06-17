@@ -5,7 +5,6 @@ import { useAddProjectUser } from "../api/hooks/use-add-project-user";
 import { useDeleteProjectUser } from "../api/hooks/use-delete-project-user";
 import { useState } from "react";
 import { UsersSelect } from "@/pages/admin/components/users-select";
-import { useGetAllUsers } from "@/pages/admin/api/hooks/use-get-all-users";
 import { ConfirmButton } from "./confirm-button";
 import { Button } from "@/shared/ui/button";
 
@@ -21,23 +20,25 @@ export function UpdatableProjectUsers({
   const { mutateAsync: mutateAddAsync, isPending } = useAddProjectUser();
   const { mutateAsync: mutateDeleteAsync } = useDeleteProjectUser();
   const [edit, setEdit] = useState(false);
-  const [addedUserName, setAddedUserName] = useState("");
+  const [addedUserId, setAddedUserId] = useState<number | null>(null);
   const { toast } = useToast();
-  const { data: users } = useGetAllUsers();
 
   const handleAddUser = async () => {
     try {
-      const userId = users?.find((user) => user.fullName === addedUserName)?.id;
-      if (!userId) throw new Error("Не удалось получить участника");
+      if (addedUserId === null) { throw new Error("Не удалось получить участника"); }
+
       await mutateAddAsync({
         projectId,
-        userId,
+        userId: addedUserId,
       });
-      setAddedUserName("");
+
+      setAddedUserId(null);
       setEdit(false);
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       toast({
-        title: "Не удалось добавить участник",
+        title: "Не удалось добавить участника",
         description:
           error instanceof Error
             ? error.message
@@ -76,15 +77,15 @@ export function UpdatableProjectUsers({
       {edit && (
         <div className="flex flex-col gap-2 w-full">
           <UsersSelect
-            value={addedUserName ? [addedUserName] : []}
-            onValueChange={setAddedUserName}
+            value={addedUserId}
+            onValueChange={setAddedUserId}
           />
           <div className="flex gap-2 items-center">
             <ConfirmButton
               onConfirm={handleAddUser}
               isLoading={isPending}
               show
-              disabled={!addedUserName}
+              disabled={addedUserId === null}
             />
             <Button onClick={() => setEdit(false)} variant="outline">
               Отменить

@@ -16,12 +16,13 @@ import { Spinner } from "@/shared/ui/spinner";
 interface Entity {
   id: number;
   name: string;
+  mail?: string;
 }
 
 interface MultipleSearchCommandProps {
   entities: Entity[] | undefined;
-  value: string[];
-  onValueChange: (value: string) => void;
+  value: number | null;
+  onValueChange: (value: number) => void;
   triggerClassName?: string;
   placeholder: string;
   searchPlaceholder: string;
@@ -42,9 +43,8 @@ export function MultipleSearchCommand({
   const [open, setOpen] = useState(false);
 
   const getButtonText = () => {
-    if (value.length === 0) return placeholder;
-    if (value.length === 1) return value[0];
-    return "Выбрано несколько";
+    const selectedUser = entities?.find( (entity) => entity.id === value);
+    return selectedUser?.name ?? placeholder;
   };
 
   return (
@@ -57,7 +57,7 @@ export function MultipleSearchCommand({
           className={cn(
             "font-normal min-w-56 text-left justify-between ",
             triggerClassName,
-            { "text-muted-foreground": value.length === 0 }
+            { "text-muted-foreground": value === null }
           )}
         >
           <span className="truncate">{getButtonText()}</span>
@@ -80,15 +80,24 @@ export function MultipleSearchCommand({
               {entities?.map((entity) => (
                 <CommandItem
                   key={entity.id}
-                  value={entity.name}
-                  onSelect={onValueChange}
+                  value={`${entity.name}-${entity.id}`}
+                  onSelect={() => onValueChange(entity.id)}
                 >
                   <Check
                     className={cn("mr-2 h-4 w-4 opacity-0", {
-                      "opacity-100": value.includes(entity.name),
+                      "opacity-100": value === entity.id,
                     })}
                   />
-                  {entity.name}
+
+                  <div className="flex w-full items-center justify-between">
+                    <span>{entity.name}</span>
+
+                    {entity.mail && (
+                      <span className="text-muted-foreground text-xs">
+                        {entity.mail  }
+                      </span>
+                    )}
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>
