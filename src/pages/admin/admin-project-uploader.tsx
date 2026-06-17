@@ -12,7 +12,6 @@ import { CreateAdminProject } from "@/shared/types/schemas";
 import { ProjectCarousel } from "@/shared/widgets/project-carousel";
 import { FileUpload } from "../create-project-page/components/file-upload";
 import { useToast } from "@/shared/hooks/use-toast";
-import { useGetAllUsers } from "./api/hooks/use-get-all-users";
 import { useCreateAdminProject } from "./api/hooks/use-create-admin-project";
 import { UsersSelect } from "./components/users-select";
 import { useGetAllTracks } from "@/shared/api/hooks/use-get-all-tracks";
@@ -24,7 +23,7 @@ type CreateAdminProjectState = {
   track: string;
   date: string;
   tags: string[];
-  users: string[];
+  users: number[];
   presentation: string;
   description: string;
   title: string;
@@ -51,7 +50,6 @@ export function AdminProjectUploader() {
   const [project, setProject] = useState<CreateAdminProjectState>(
     initialCreateProjectState
   );
-  const { data: users } = useGetAllUsers();
   const { data: dates } = useGetAllDates();
   const { data: tags } = useGetAllTags();
   const { data: tracks } = useGetAllTracks();
@@ -74,9 +72,7 @@ export function AdminProjectUploader() {
         ?.filter((tag) => project.tags.includes(tag.name))
         .map((tag) => tag.id);
 
-      const usersId = users
-        ?.filter((user) => project.users.includes(user.fullName))
-        .map((user) => user.id);
+      const usersId = project.users;
 
       if (
         !tagsId ||
@@ -139,19 +135,19 @@ export function AdminProjectUploader() {
     });
   };
 
-  const updateUsers = (userName: string) => {
+  const updateUsers = (userId: number) => {
     setProject((prev) => {
-      if (prev.users.includes(userName)) {
+      if (prev.users.includes(userId)) {
         return {
           ...prev,
-          users: prev.users.filter((t) => t !== userName),
-        };
-      } else {
-        return {
-          ...prev,
-          users: [...prev.users, userName],
+          users: prev.users.filter((id) => id !== userId),
         };
       }
+
+      return {
+        ...prev,
+        users: [...prev.users, userId],
+      };
     });
   };
 

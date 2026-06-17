@@ -2,7 +2,7 @@ import { MultipleSearchCommand } from "@/shared/widgets/multiple-search-command"
 import { useGetAllUsers } from "@/pages/admin/api/hooks/use-get-all-users";
 
 interface UsersSelectProps {
-  value: number | null;
+  value: number[];
   onValueChange: (value: number) => void;
   triggerClassName?: string;
 }

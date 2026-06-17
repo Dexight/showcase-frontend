@@ -21,7 +21,7 @@ interface Entity {
 
 interface MultipleSearchCommandProps {
   entities: Entity[] | undefined;
-  value: number | null;
+  value: number[];
   onValueChange: (value: number) => void;
   triggerClassName?: string;
   placeholder: string;
@@ -43,8 +43,19 @@ export function MultipleSearchCommand({
   const [open, setOpen] = useState(false);
 
   const getButtonText = () => {
-    const selectedUser = entities?.find( (entity) => entity.id === value);
-    return selectedUser?.name ?? placeholder;
+    if (value.length === 0) {
+      return placeholder;
+    }
+
+    if (value.length === 1) {
+      const selected = entities?.find(
+        (entity) => entity.id === value[0]
+      );
+
+      return selected?.name ?? placeholder;
+    }
+
+    return `Выбрано: ${value.length}`;
   };
 
   return (
@@ -57,7 +68,7 @@ export function MultipleSearchCommand({
           className={cn(
             "font-normal min-w-56 text-left justify-between ",
             triggerClassName,
-            { "text-muted-foreground": value === null }
+            { "text-muted-foreground": value.length === 0 }
           )}
         >
           <span className="truncate">{getButtonText()}</span>
@@ -85,7 +96,7 @@ export function MultipleSearchCommand({
                 >
                   <Check
                     className={cn("mr-2 h-4 w-4 opacity-0", {
-                      "opacity-100": value === entity.id,
+                      "opacity-100": value.includes(entity.id),
                     })}
                   />
 
