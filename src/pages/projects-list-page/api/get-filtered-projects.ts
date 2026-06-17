@@ -3,10 +3,18 @@ import { projectsSchema } from "@/shared/types/schemas";
 import { Filters } from "@/app/providers/filters/filters-context";
 import { mapProjects } from "@/shared/utils/map-projects";
 
-export async function getFilteredProjects({ tags, track, date }: Filters) {
+export async function getFilteredProjects({ tags, track, date }: Filters,
+                                          allTags: { id: number; name: string }[]
+) {
   const params = new URLSearchParams();
 
-  tags.forEach((tag) => params.append("tags", String(tag)));
+  tags.forEach((tagId) => {
+    const tagName = allTags.find((tag) => tag.id === tagId)?.name;
+
+    if (tagName) {
+      params.append("tags", tagName);
+    }
+  });
   if (track) params.append("track", track);
   if (date) params.append("date", date);
 
