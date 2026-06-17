@@ -93,9 +93,25 @@ export function MultipleSearchCommand({
                     <span>{entity.name}</span>
 
                     {entity.mail && (
-                      <span className="text-muted-foreground text-xs">
-                        {entity.mail  }
+                      <div className="relative group">
+                      <span className="text-muted-foreground text-xs cursor-help">
+                        @
                       </span>
+
+                      <div
+                        className="
+                          absolute right-0 top-full z-50 mt-1
+                          rounded-md border bg-popover px-2 py-1
+                          text-xs whitespace-nowrap shadow-md
+                          opacity-0 invisible
+                          transition-opacity
+                          group-hover:opacity-100
+                          group-hover:visible
+                        "
+                      >
+                        {entity.mail}
+                      </div>
+                    </div>
                     )}
                   </div>
                 </CommandItem>

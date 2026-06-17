@@ -16,7 +16,7 @@ export function UsersSelect({
   const mappedUsers = users?.map((user) => ({
     id: user.id,
     name: user.fullName,
-    mail: user.email ? "@" : undefined,
+    mail: user.email,
   }));
   return (
     <MultipleSearchCommand
