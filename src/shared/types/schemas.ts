@@ -9,6 +9,7 @@ export const tagsSchema = z.array(tagSchema);
 export const dateSchema = z.object({
   id: z.number().int(),
   name: z.string(),
+  closedTracksId: z.array(z.number().int()).nullable(),
 });
 export const datesSchema = z.array(dateSchema);
 
@@ -29,7 +30,6 @@ export const usersSchema = z.array(userSchema);
 export const trackSchema = z.object({
   id: z.number().int(),
   name: z.string(),
-  closed: z.any(),
 });
 
 export const tracksSchema = z.array(trackSchema);

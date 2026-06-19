@@ -1,5 +1,5 @@
 import { Footer } from "@/shared/layout/components/footer";
-import { Tag, University, Calendar, Edit, File, List, Shield} from "lucide-react";
+import { Tag, University, Calendar, Edit, File, List, Shield, Lock} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Link } from "react-router";
 import { useAuth } from "@/shared/hooks/use-auth";
@@ -90,6 +90,7 @@ export function AdminPage() {
               </CardContent>
             </Link>
           </Card>
+
           <Card className="cursor-pointer transition-all hover:shadow-md hover:scale-105 active:scale-95">
             <Link to="projects">
               <CardHeader className="text-center pb-2">
@@ -107,6 +108,7 @@ export function AdminPage() {
               </CardContent>
             </Link>
           </Card>
+
           <Card className="cursor-pointer transition-all hover:shadow-md hover:scale-105 active:scale-95">
             <Link to="primary-filling">
               <CardHeader className="text-center pb-2">
@@ -124,7 +126,26 @@ export function AdminPage() {
               </CardContent>
             </Link>
           </Card>
-          {currentUser?.role.id === 4 && (
+
+          <Card className="cursor-pointer transition-all hover:shadow-md hover:scale-105 active:scale-95">
+            <Link to="track-access">
+              <CardHeader className="text-center pb-2">
+                <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900">
+                  <Lock className="h-6 w-6 text-red-600 dark:text-red-400" />
+                </div>
+                <CardTitle className="text-lg">
+                  Управление треками
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  Управление доступом загрузки проектов на трек
+                </p>
+              </CardContent>
+            </Link>
+          </Card>
+          
+          {currentUser?.role.id === 2 && (
             <Card className="cursor-pointer transition-all hover:shadow-md hover:scale-105 active:scale-95">
               <Link to="admins">
                 <CardHeader className="text-center pb-2">
