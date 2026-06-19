@@ -18,6 +18,10 @@ import { useAuth } from "@/shared/hooks/use-auth";
 import { useGetDatabaseUser } from "@/pages/create-project-page/api/hooks/use-get-database-user";
 import { UpdatableScreenshots } from "./components/updatable-screenshots";
 
+import { useGetAllDates } from "../../projects-list-page/api/hooks/use-get-all-dates";
+import { useGetAllTracks } from "@/shared/api/hooks/use-get-all-tracks";
+import { useMemo } from "react";
+
 export function AdminProjectEditor() {
   const { id } = useParams();
 
@@ -29,6 +33,23 @@ export function AdminProjectEditor() {
   );
 	
   const { data: project, isPending, refetch } = useGetProject(id as string);
+  const { data: dates } = useGetAllDates();
+  const { data: tracks } = useGetAllTracks()
+
+  const currentDate = useMemo(() => {
+    if (!project?.date?.name) return null;
+    return dates?.find((d) => d.name === project.date?.name);
+  }, [dates, project?.date?.name]);
+
+  const currentTrack = useMemo(() => {
+    if (!project?.track?.name) return null;
+    return tracks?.find((t) => t.name === project.track?.name);
+  }, [tracks, project?.track?.name]);
+
+  const isTrackClosed = useMemo(() => {
+    if (!currentDate || !currentTrack) return false;
+    return currentDate.closedTracksId?.includes(currentTrack.id);
+  }, [currentDate, currentTrack]);
 
   if (isPending) {
     return <FullPageSpinner />;
@@ -38,12 +59,10 @@ export function AdminProjectEditor() {
     return <ErrorFallback refetch={refetch} />;
   }
 
-  const canEdit =
-    currentUser &&
-    (
-      currentUser.role.id === 4 ||
-      project.users?.some((u) => u.id === currentUser.id)
-    );
+  const isAdmin = currentUser?.role.id === 4 || currentUser?.role.id === 2;
+  const isMember = project.users?.some((u) => u.id === currentUser?.id);
+
+  const canEdit = currentUser && (isAdmin || (isMember && !isTrackClosed));
   
   if (!canEdit) {
     return <Navigate to={`/projects/${project.id}`} replace />;

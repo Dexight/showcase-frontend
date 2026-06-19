@@ -16,14 +16,36 @@ import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useDeleteProject } from "./api/hooks/use-delete-project";
 
+import { useGetAllDates } from "../projects-list-page/api/hooks/use-get-all-dates";
+import { useGetAllTracks } from "@/shared/api/hooks/use-get-all-tracks";
+import { useMemo } from "react";
+
 export function ProjectPage() {
   const { id } = useParams();
   const { data: project, isPending, refetch } = useGetProject(id as string);
+  const { data: dates } = useGetAllDates();
+  const { data: tracks } = useGetAllTracks()
   const { authUser, isAuthLoading } = useAuth();
   const { data: currentUser } = useGetDatabaseUser(
 	  authUser?.attributes.email as string,
 	  !!authUser && !isAuthLoading
   );
+
+  const currentDate = useMemo(() => {
+    if (!project?.date?.name) return null;
+    return dates?.find((d) => d.name === project.date?.name);
+  }, [dates, project?.date?.name]);
+
+  const currentTrack = useMemo(() => {
+    if (!project?.track?.name) return null;
+    return tracks?.find((t) => t.name === project.track?.name);
+  }, [tracks, project?.track?.name]);
+
+  const isTrackClosed = useMemo(() => {
+    if (!currentDate || !currentTrack) return false;
+    return currentDate.closedTracksId?.includes(currentTrack.id);
+  }, [currentDate, currentTrack]);
+
   const navigate = useNavigate();
   const deleteProjectMutation = useDeleteProject();
   if (isPending) {
@@ -37,12 +59,10 @@ export function ProjectPage() {
     return <ErrorFallback refetch={refetch} />;
   }
 
-  const canEdit =
-    currentUser &&
-    (
-      currentUser.role.id === 4 ||
-      project.users?.some((u) => u.id === currentUser.id)
-    );
+  const isAdmin = currentUser?.role.id === 4 || currentUser?.role.id === 2;
+  const isMember = project.users?.some((u) => u.id === currentUser?.id);
+  
+  const canEdit = currentUser && (isAdmin || (isMember && !isTrackClosed));
   
   const hasLinks = project.repo || project.presentation;
 

@@ -13,6 +13,7 @@ import { AdminTags } from "@/pages/admin/admin-tags";
 import { AdminTracks } from "@/pages/admin/admin-tracks";
 import { AdminDates } from "@/pages/admin/admin-dates";
 import { AdminAdmins } from "@/pages/admin/admin-admins"; 
+import { AdminTrackAccess } from "@/pages/admin/admin-track-access";
 import { AdminRoute } from "@/app/router/admin-route";
 import { SuperAdminRoute } from "@/app/router/super-admin-route";
 import { FullPageSpinner } from "@/shared/ui/full-page-spinner";
@@ -89,6 +90,7 @@ export function AppRouter() {
           <Route path="tags" element={<AdminTags />} />
           <Route path="tracks" element={<AdminTracks />} />
           <Route path="dates" element={<AdminDates />} />
+          <Route path="track-access" element={<AdminTrackAccess />} />
           <Route element={<SuperAdminRoute />}>
             <Route path="admins" element={<AdminAdmins />} />
           </Route>
