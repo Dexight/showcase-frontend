@@ -24,7 +24,7 @@ export function AdminAdmins() {
     useState<number | null>(null);
 
   const admins = users.filter(
-    (user) => user.role.id === 4
+    (user) => user.role.id === 2
   );
 
   const handleAddAdmin = async () => {

@@ -145,7 +145,7 @@ export function AdminPage() {
             </Link>
           </Card>
           
-          {currentUser?.role.id === 2 && (
+          {currentUser?.role.id === 4 && (
             <Card className="cursor-pointer transition-all hover:shadow-md hover:scale-105 active:scale-95">
               <Link to="admins">
                 <CardHeader className="text-center pb-2">
