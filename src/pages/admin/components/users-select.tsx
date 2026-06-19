@@ -2,7 +2,7 @@ import { MultipleSearchCommand } from "@/shared/widgets/multiple-search-command"
 import { useGetAllUsers } from "@/pages/admin/api/hooks/use-get-all-users";
 
 interface UsersSelectProps {
-  value: number | null;
+  value: number[];
   onValueChange: (value: number) => void;
   triggerClassName?: string;
 }
@@ -16,7 +16,7 @@ export function UsersSelect({
   const mappedUsers = users?.map((user) => ({
     id: user.id,
     name: user.fullName,
-    mail: user.email ? "@" : undefined,
+    mail: user.email,
   }));
   return (
     <MultipleSearchCommand

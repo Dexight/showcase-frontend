@@ -21,16 +21,16 @@ export function ProjectsListPage() {
   const updateTrackFilter = (track: string) => {
     setFilters({ ...filters, track });
   };
-  const updateTagsFilter = (tag: string) => {
-    if (filters.tags.includes(tag)) {
+  const updateTagsFilter = (tagId: number) => {
+    if (filters.tags.includes(tagId)) {
       setFilters({
         ...filters,
-        tags: filters.tags.filter((t) => t !== tag),
+        tags: filters.tags.filter((id) => id !== tagId),
       });
     } else {
       setFilters({
         ...filters,
-        tags: [...filters.tags, tag],
+        tags: [...filters.tags, tagId],
       });
     }
   };

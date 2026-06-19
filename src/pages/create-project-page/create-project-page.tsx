@@ -23,7 +23,7 @@ type CreateProjectState = {
   screenshots: File[] | null;
   track: string;
   date: string;
-  tags: string[];
+  tags: number[];
   users: null | string[];
   presentation: string;
   description: string;
@@ -72,9 +72,7 @@ export function CreateProjectPage() {
         dates.find((date) => date.name === project.date)?.id ??
         dates.at(-1)?.id;
 
-      const tagsId = tags
-        ?.filter((tag) => project.tags.includes(tag.name))
-        .map((tag) => tag.id);
+      const tagsId = project.tags;
 
       if (!tagsId || !dateId || !trackId || tagsId.length === 0) {
         throw new Error("Не все необходимые поля корректно заполнены");
@@ -112,19 +110,19 @@ export function CreateProjectPage() {
     }));
   };
 
-  const updateTags = (tag: string) => {
+  const updateTags = (tagId: number) => {
     setProject((prev) => {
-      if (prev.tags.includes(tag)) {
+      if (prev.tags.includes(tagId)) {
         return {
           ...prev,
-          tags: prev.tags.filter((t) => t !== tag),
-        };
-      } else {
-        return {
-          ...prev,
-          tags: [...prev.tags, tag],
+          tags: prev.tags.filter((id) => id !== tagId),
         };
       }
+
+      return {
+        ...prev,
+        tags: [...prev.tags, tagId],
+      };
     });
   };
 

@@ -20,19 +20,19 @@ export function UpdatableProjectUsers({
   const { mutateAsync: mutateAddAsync, isPending } = useAddProjectUser();
   const { mutateAsync: mutateDeleteAsync } = useDeleteProjectUser();
   const [edit, setEdit] = useState(false);
-  const [addedUserId, setAddedUserId] = useState<number | null>(null);
+  const [addedUserId, setAddedUserId] = useState<number[]>([]);
   const { toast } = useToast();
 
   const handleAddUser = async () => {
     try {
-      if (addedUserId === null) { throw new Error("Не удалось получить участника"); }
+      if (addedUserId.length === 0) { throw new Error("Не удалось получить участника"); }
 
       await mutateAddAsync({
         projectId,
-        userId: addedUserId,
+        userId: addedUserId[0],
       });
 
-      setAddedUserId(null);
+      setAddedUserId([]);
       setEdit(false);
     } 
     catch (error) 
@@ -78,14 +78,14 @@ export function UpdatableProjectUsers({
         <div className="flex flex-col gap-2 w-full">
           <UsersSelect
             value={addedUserId}
-            onValueChange={setAddedUserId}
+            onValueChange={(id) => setAddedUserId([id])}
           />
           <div className="flex gap-2 items-center">
             <ConfirmButton
               onConfirm={handleAddUser}
               isLoading={isPending}
               show
-              disabled={addedUserId === null}
+              disabled={addedUserId.length === 0}
             />
             <Button onClick={() => setEdit(false)} variant="outline">
               Отменить

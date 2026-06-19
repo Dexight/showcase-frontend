@@ -3,7 +3,7 @@ import { useAuth } from "@/shared/hooks/use-auth";
 import { useGetDatabaseUser } from "@/pages/create-project-page/api/hooks/use-get-database-user";
 import { FullPageSpinner } from "@/shared/ui/full-page-spinner";
 
-export function AdminRoute() {
+export function SuperAdminRoute() {
   const { authUser, isAuthLoading } = useAuth();
 
   const { data: currentUser, isPending } = useGetDatabaseUser(
@@ -19,8 +19,8 @@ export function AdminRoute() {
     return <Navigate to="/login" replace />;
   }
 
-  if (currentUser?.role.id !== 4 && currentUser?.role.id !== 2) {
-    return <Navigate to="/" replace />;
+  if (currentUser?.role.id !== 4) {
+    return <Navigate to="/admin" replace />;
   }
 
   return <Outlet />;

@@ -2,13 +2,13 @@ import { createContext } from "react";
 import { z } from "zod";
 
 export type Filters = {
-  tags: string[];
+  tags: number[];
   track: string;
   date: string;
 };
 
 export const filtersSchema = z.object({
-  tags: z.array(z.string()),
+  tags: z.array(z.number()),
   track: z.string(),
   date: z.string(),
 });

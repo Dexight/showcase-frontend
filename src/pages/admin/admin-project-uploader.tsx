@@ -12,7 +12,6 @@ import { CreateAdminProject } from "@/shared/types/schemas";
 import { ProjectCarousel } from "@/shared/widgets/project-carousel";
 import { FileUpload } from "../create-project-page/components/file-upload";
 import { useToast } from "@/shared/hooks/use-toast";
-import { useGetAllUsers } from "./api/hooks/use-get-all-users";
 import { useCreateAdminProject } from "./api/hooks/use-create-admin-project";
 import { UsersSelect } from "./components/users-select";
 import { useGetAllTracks } from "@/shared/api/hooks/use-get-all-tracks";
@@ -23,8 +22,8 @@ type CreateAdminProjectState = {
   screenshots: File[] | null;
   track: string;
   date: string;
-  tags: string[];
-  users: string[];
+  tags: number[];
+  users: number[];
   presentation: string;
   description: string;
   title: string;
@@ -51,7 +50,6 @@ export function AdminProjectUploader() {
   const [project, setProject] = useState<CreateAdminProjectState>(
     initialCreateProjectState
   );
-  const { data: users } = useGetAllUsers();
   const { data: dates } = useGetAllDates();
   const { data: tags } = useGetAllTags();
   const { data: tracks } = useGetAllTracks();
@@ -70,13 +68,9 @@ export function AdminProjectUploader() {
         dates.find((date) => date.name === project.date)?.id ??
         dates.at(-1)?.id;
 
-      const tagsId = tags
-        ?.filter((tag) => project.tags.includes(tag.name))
-        .map((tag) => tag.id);
+      const tagsId = project.tags;
 
-      const usersId = users
-        ?.filter((user) => project.users.includes(user.fullName))
-        .map((user) => user.id);
+      const usersId = project.users;
 
       if (
         !tagsId ||
@@ -123,35 +117,35 @@ export function AdminProjectUploader() {
     }));
   };
 
-  const updateTags = (tag: string) => {
+  const updateTags = (tagId: number) => {
     setProject((prev) => {
-      if (prev.tags.includes(tag)) {
+      if (prev.tags.includes(tagId)) {
         return {
           ...prev,
-          tags: prev.tags.filter((t) => t !== tag),
-        };
-      } else {
-        return {
-          ...prev,
-          tags: [...prev.tags, tag],
+          tags: prev.tags.filter((id) => id !== tagId),
         };
       }
+
+      return {
+        ...prev,
+        tags: [...prev.tags, tagId],
+      };
     });
   };
 
-  const updateUsers = (userName: string) => {
+  const updateUsers = (userId: number) => {
     setProject((prev) => {
-      if (prev.users.includes(userName)) {
+      if (prev.users.includes(userId)) {
         return {
           ...prev,
-          users: prev.users.filter((t) => t !== userName),
-        };
-      } else {
-        return {
-          ...prev,
-          users: [...prev.users, userName],
+          users: prev.users.filter((id) => id !== userId),
         };
       }
+
+      return {
+        ...prev,
+        users: [...prev.users, userId],
+      };
     });
   };
 
