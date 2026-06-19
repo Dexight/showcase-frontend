@@ -9,6 +9,4 @@ export async function deleteAdmin(userId: number) {
   if (!res.ok) {
     throw new Error("Не удалось удалить администратора");
   }
-
-  return await res.json();
 }

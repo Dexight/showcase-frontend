@@ -1,78 +1,89 @@
 import { useState } from "react";
 import { Check, Trash2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+
 import { UsersSelect } from "./components/users-select";
 import { useGetAllUsers } from "./api/hooks/use-get-all-users";
-import { Button } from "@/shared/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { addAdmin } from "./api/add-admin";
 import { deleteAdmin } from "./api/delete-admin";
 
-interface AdminUser {
-  id: number;
-  fullName: string;
-}
+import { Button } from "@/shared/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/ui/card";
 
 export function AdminAdmins() {
-  const { data: users } = useGetAllUsers();
+  const queryClient = useQueryClient();
 
-  const [selectedUser, setSelectedUser] = useState("");
-  const [admins, setAdmins] = useState<AdminUser[]>([]);
+  const { data: users = [] } = useGetAllUsers();
+  
+  const [selectedUser, setSelectedUser] =
+    useState<number | null>(null);
+
+  const admins = users.filter(
+    (user) => user.role.id === 4
+  );
 
   const handleAddAdmin = async () => {
-  const user = users?.find(
-    (user) => user.fullName === selectedUser
-  );
+    const user = users.find(
+      (user) => user.id === selectedUser
+    );
 
-  if (!user) return;
+    if (!user) return;
 
-  const alreadyExists = admins.some(
-    (admin) => admin.id === user.id
-  );
+    const alreadyExists = admins.some(
+      (admin) => admin.id === user.id
+    );
 
-  if (alreadyExists) return;
+    if (alreadyExists) return;
 
-  await addAdmin(user.id);
+    await addAdmin(user.id);
 
-  setAdmins((prev) => [
-    ...prev,
-    {
-      id: user.id,
-      fullName: user.fullName,
-    },
-  ]);
+    await queryClient.invalidateQueries({
+      queryKey: ["users"],
+    });
 
-  setSelectedUser("");
-};
+    setSelectedUser(null);
+  };
 
-const handleDeleteAdmin = async (id: number) => {
-  await deleteAdmin(id);
+  const handleDeleteAdmin = async (
+    id: number
+  ) => {
+    await deleteAdmin(id);
 
-  setAdmins((prev) =>
-    prev.filter((admin) => admin.id !== id)
-  );
-};
+    await queryClient.invalidateQueries({
+      queryKey: ["users"],
+    });
+  };
 
   return (
     <Card className="w-full max-w-3xl">
       <CardHeader>
         <div className="flex justify-center items-center gap-2">
-            <CardTitle>
+          <CardTitle>
             Управление администраторами
-            </CardTitle>
+          </CardTitle>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-6">
         <div className="flex justify-center items-center gap-2">
           <UsersSelect
-            value={selectedUser ? [selectedUser] : []}
+            value={
+              selectedUser !== null
+                ? [selectedUser]
+                : []
+            }
             onValueChange={setSelectedUser}
           />
 
           <Button
             size="icon"
             onClick={handleAddAdmin}
-            disabled={!selectedUser}
+            disabled={selectedUser === null}
           >
             <Check />
           </Button>
