@@ -2,9 +2,6 @@ import "./global.css";
 import { createRoot } from "react-dom/client";
 import { AppRouter } from "@/app/router/app-router";
 import { AppProvider } from "@/app/providers/app-provider";
-import { installDevFetchInterceptor } from "@/app/dev-fetch";
-
-installDevFetchInterceptor();
 
 createRoot(document.getElementById("root")!).render(
   <AppProvider>

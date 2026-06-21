@@ -5,7 +5,6 @@ import { useAuth } from "@/shared/hooks/use-auth";
 import { API_URL } from "@/shared/api/constants";
 import { Spinner } from "@/shared/ui/spinner";
 import { useIsMobile } from "@/shared/hooks/use-is-mobile";
-import { IS_DEV_MODE } from "@/shared/lib/deployment-mode";
 
 export function UserAccountButton() {
   const { isAuthLoading, authUser } = useAuth();
@@ -19,17 +18,6 @@ export function UserAccountButton() {
     );
   }
   if (!authUser) {
-    if (IS_DEV_MODE) {
-      return (
-        <Button
-          variant="outline"
-          size={isMobile ? "sm" : "default"}
-          onClick={() => navigate("/login", { replace: true })}
-        >
-          Войти
-        </Button>
-      );
-    }
     return (
       <Button variant="outline" size={isMobile ? "sm" : "default"} asChild>
         <a
